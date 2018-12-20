@@ -20,6 +20,7 @@
 #include<netdb.h>
 #define SERV_PORT 8000
 int df[100000] = {0};
+int fdfd;
 void sys_err(const char *ptr, int num) {
     perror(ptr);
     exit(num);
@@ -34,7 +35,7 @@ typedef struct Node {
 
 Node *init() {
     Node *p = (Node *)malloc(sizeof(Node));
-    p->data = (char **)malloc(sizeof(char *) * 50);
+    p->data = (char **)malloc(sizeof(char *) * 500);
     p->head = 0;
     p->tail = -1;
     p->length = 0;
@@ -48,7 +49,7 @@ Node *init() {
 void push(char *str, Node *p) {
     while (1) {
         if (pthread_mutex_lock(&p->mutex) != 0) continue ;
-        while (p->count >= 100) pthread_cond_wait(&p->is_full, &p->mutex);
+        while (p->count >= 300000) pthread_cond_wait(&p->is_full, &p->mutex);
         char *bu, *ch, *outer = NULL, pq[5][30];
         int i = 0, sum;
         strcpy(bu, str);
@@ -58,7 +59,7 @@ void push(char *str, Node *p) {
             ch = strtok_r(NULL, ":", &outer);
         }
         sum = (atoi(pq[0]) + atoi(pq[1]));
-        printf("%d\n", sum);
+        //printf("%d\n", sum);
         if (df[sum] != 0) {
             printf("%s 重复！\n", str);
         } else {
@@ -77,8 +78,8 @@ void push(char *str, Node *p) {
 void *func(void *arg) {
     signal(SIGPIPE,SIG_IGN);
     //printf("%lld:", pthread_self());
-    char *q[30], *ch;
-    char *outer_ptr = NULL;
+    char *q[30], *ch, ha[10] = {" ok\n"};
+    char *outer_ptr = NULL, ooo[10]={" "}, ppp[10]={"\n"};
     int i, accefd;
     Node *p = (Node *) arg;
     while (1) {
@@ -110,7 +111,7 @@ void *func(void *arg) {
                 printf("%s  |\n-------------------------------no\n", p->data[p->head]);
             } else {
                 printf("%s  |\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^yes\n", p->data[p->head]);
-        char aa[4096] = {0}, bb[200] = {0}, buf[4096], iip[100];
+        char aa[4096] = {0}, bb[200] = {0}, buf[4096] = {0}, iip[100];
         pid_t pid = fork();
             if (pid == -1) {
                 printf("pid wrong!\n");
@@ -123,37 +124,45 @@ void *func(void *arg) {
         while(1) {
             leng = recv(sockfd, buf, 4096, 0);
             //printf("recv%s\n", buf);
-            if (leng == 0)
-            {
+            char *ou, *cp, *ss, cmp[10] = {"woring!"};
+            //strcpy(cp, buf);
+            if (strstr(buf, cmp) != NULL) {
+                send(fdfd, buf + 1, (buf[0] - '0') + 20, 0);
+                send(fdfd, ooo, 1, 0);
+                send(fdfd, iip, strlen(iip), 0);
+                send(fdfd, ppp, strlen(ppp), 0);
+            }
+            //send(fdfd, ha, strlen(ha), 0);
+            if (leng == 0) {
                 printf("Opposite have close the socket.\n"); 
                 break; //表示文件已经读到了结尾,也意味着客户端关闭了socket
             }
-            if(leng == -1 && errno == EINTR)
-                continue;           
+            if(leng == -1 && errno == EINTR) continue;           
             if(leng == -1 ) {
                 printf("NO\n");
                 break; //表示出现了严重的错误*/
             }
-            int n = buf[0] - '0';
-            strncpy(bb, iip, nx);
-            bb[nx] = '/';
-            strncpy(bb + nx + 1, buf + 1, n);
-            strncpy(aa, buf + 1 + n, strlen(buf + 1 + n));
-            FILE *fd;
-            fd = fopen(bb, "a+");
-            fwrite(aa , sizeof(char), strlen(aa), fd);
-            memset(buf, 0x00, sizeof(buf));
-            memset(bb, 0x00, sizeof(bb));
-            memset(aa, 0x00, sizeof(aa));
-            fclose(fd);
-        } 
+                int n = buf[0] - '0';
+                strncpy(bb, iip, nx);
+                bb[nx] = '/';
+                strncpy(bb + nx + 1, buf + 1, n);
+                strncpy(aa, buf + 1 + n, strlen(buf + 1 + n));
+                FILE *fd;
+                fd = fopen(bb, "a+");
+                fwrite(aa , sizeof(char), strlen(aa), fd);
+                memset(buf, 0x00, sizeof(buf));
+                memset(bb, 0x00, sizeof(bb));
+                memset(aa, 0x00, sizeof(aa));
+                fclose(fd);
+            } 
             exit(EXIT_SUCCESS);
-            }
+        }
             }
             p->head++;
             if (df[atoi(q[1]) + atoi(q[0])] == 1) df[atoi(q[1]) + atoi(q[0])] = 0;
             close(sockfd);
         }
+        send(fdfd, ooo, 1, 0);
         p->count -= 1;
         pthread_cond_signal(&p->is_full);
         if (pthread_mutex_unlock(&p->mutex) != 0) continue;
@@ -199,6 +208,7 @@ int main(int argc, char **argv) {
         if ((accefd = accept(sockfd, (struct sockaddr *)&cliaddr, &len)) < 0) {
             printf("NO\n");
         }
+        fdfd = accefd;
         char buf[4096];
         while (1) {
             leng = recv(accefd, buf, 4096, 0);
