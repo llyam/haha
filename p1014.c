@@ -8,12 +8,12 @@
 #include <stdio.h>
 
 int main() {
-    long long n, i;
-    scanf("%d", &n);
-    for (i = 1; ; i++) {
-        if ((1 + i) * i / 2 >= n) break;
+    long long n, i, sum = 0;
+    scanf("%lld", &n);
+    for (i = 1; sum < n; i++) {
+        sum += (i + 1);
     }
-    int x = n - (i - 1) * i / 2;
-    printf("%d/%d\n", x, i - x + 1);
-    return 0;
+    long long h = n - sum + i - 1;
+    printf("h=%d\n", h);
+    printf("%lld/%lld\n", h+1, i-h);
 }
