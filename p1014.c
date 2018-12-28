@@ -1,19 +1,27 @@
 /*************************************************************************
-	> File Name:p1014.c
+	> File Name:n.p1014.c
 	> Author: shenyuchi
 	> Mail: 1349334667@qq.com
-	> Created Time:2018年11月17日 星期六 14时26分52秒
+	> Created Time:2018年12月28日 星期五 19时54分28秒
  ************************************************************************/
 
 #include <stdio.h>
 
 int main() {
-    long long n, i, sum = 0;
-    scanf("%lld", &n);
-    for (i = 1; sum < n; i++) {
-        sum += (i + 1);
+    int n, num = 0, sum = 0, p;
+    scanf("%d", &n);
+    for (p = 1; ; p++) {
+        num++;
+        sum += p;
+        if (sum >= n) break;
     }
-    long long h = n - sum + i - 1;
-    printf("h=%d\n", h);
-    printf("%lld/%lld\n", h+1, i-h);
+    printf("p=%d\n", p);
+    int nu = n - sum + p;
+    if (num % 2 == 0) {
+        printf("%d/%d\n", nu, p-nu+1);
+    } else {
+        printf("%d/%d\n", p-nu+1, nu);
+    } 
+
+    return 0;
 }
