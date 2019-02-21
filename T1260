@@ -1,0 +1,40 @@
+​#include<stdio.h>
+#include<stdlib.h>
+
+int cha(int *ch, int key) {
+    if (ch[key] != key) {
+        ch[key] = cha(ch, ch[key]);
+    }
+    return ch[key];
+}
+
+void bing(int *ch, int x, int y) {
+    int a1 = cha(ch, x);
+    int a2 = cha(ch, y);
+	if (a1 != a2) {
+        ch[a1] = a2;
+    }
+}
+
+int main() {
+    int m, n, x, y, z = 0;
+    while (scanf("%d %d", &m, &n) && m != 0 && n != 0) {
+    	z++;
+        int ch1[50000] = {0}, ch[50000] = {0}, num = 0;
+        for (int i = 0; i < m; i++) {
+            ch1[i] = i;
+        }
+        for (int i = 0; i < n; i++) {
+            scanf("%d %d", &x, &y);
+            bing(ch1, x - 1, y - 1);
+        }
+        for (int i = 0; i < m; i++) {
+            if (ch[cha(ch1, i)] == 0) {
+            	//printf("%d : %d\n", i, ch[i]);
+            	ch[cha(ch1, i)] = 1;
+            	num++;
+            }
+        }
+        printf("Case %d: %d\n", z, num);
+    }
+}
