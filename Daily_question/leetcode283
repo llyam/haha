@@ -1,0 +1,16 @@
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        vector<int> v;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] != 0) v.push_back(i); 
+        }
+        int z = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (z >= v.size()) nums[i] = 0;
+            else {
+                nums[i] = nums[v[z++]];
+            }
+        }
+    }
+};
