@@ -1,0 +1,16 @@
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        if (s.size() != t.size()) return false;
+        int flag = 0;
+        int num1 = 0, num2 = 0, add1 = 0, add2 = 0;
+        for (int i = 0; i <  s.size(); i++) {
+            flag ^= s[i] ^ t[i];
+            num1 |= s[i];
+            num2 |= t[i];
+            add1 += s[i];
+            add2 += t[i];
+        }
+        return flag == 0 && num1 == num2 && add1 == add2;
+    }
+};
