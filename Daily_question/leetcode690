@@ -1,0 +1,34 @@
+/*
+// Definition for Employee.
+class Employee {
+public:
+    int id;
+    int importance;
+    vector<int> subordinates;
+};
+*/
+
+class Solution {
+public:
+    int getImportance(vector<Employee*> employees, int id) {
+        queue<int> q;
+        map<int, int> m;
+        for (int i = 0; i < employees.size(); i++) {
+            m[employees[i]->id] = i;
+        }
+        q.push(id);
+        int sum = 0;
+        while (!q.empty()) {
+            int n = q.size();
+            for (int i = 0; i < n; i++) {
+                int e = m[q.front()];
+                q.pop();
+                sum += employees[e]->importance;
+                for (int i = 0; i < employees[e]->subordinates.size(); i++) {
+                    q.push(employees[e]->subordinates[i]);
+                }
+            }
+        }
+        return sum;
+    }
+};
