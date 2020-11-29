@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int num[3000];
+    int find(int x) {
+        if (num[x] != x) return num[x] = find(num[x]);
+        return num[x];
+    }
+    bool bind(int x, int y) {
+        int a = find(x), b = find(y);
+        //cout << x << "->" << a << endl;
+        //cout << y << "->" << b << endl;
+        if (a == b) return false;
+        num[b] = a;
+        return true;
+    }
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        for (int i = 0; i < edges.size() + 5; i++) {
+            num[i] = i;
+        }
+        for (auto edge : edges) {
+            if (bind(edge[0], edge[1]) == false) {
+                return edge;
+            }
+        }
+        return vector<int> {};
+    }
+};

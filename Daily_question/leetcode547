@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int num[40050];
+    int find(int x) {
+        if (x != num[x]) return num[x] = find(num[x]);
+        return x;
+    }
+    void bind(int a, int b) {
+        int x = find(a), y = find(b);
+        if (x == y) return ;
+        if (x < y) swap(x, y);
+        num[x] = y;
+    }
+    int findCircleNum(vector<vector<int>>& M) {
+        int m = M.size();
+        for (int i = 0; i < m * m + 5; i++) {
+            num[i] = i;
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                if (M[i][j] == 1) bind(i, j);
+            }
+        }
+        int sum = 0;
+        for (int i = 0; i < m; i++) {
+            //cout << find(i) << endl;
+            if (num[i] == i) sum++;
+        }
+        return sum;
+    }
+};
