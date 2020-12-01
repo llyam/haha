@@ -1,0 +1,39 @@
+class Solution {
+public:
+
+int left_bound(vector<int>& nums, int target) {
+    int l = 0, r = nums.size(), mid;
+    while (l < r) {
+        mid = (l + r) / 2;
+        if (target <= nums[mid]) {
+            r = mid;
+        } else {
+            l = mid + 1;
+        }
+    }
+    return l;
+}
+//最后一个大于等于查找的位置
+int right_bound(vector<int>& num, int target) {
+    int l = 0, r = num.size();
+    while (l < r) {
+        int mid = (l + r) / 2;
+        if (num[mid] <= target) {
+            l = mid + 1;
+        } else {
+            r = mid;
+        }
+    }
+    return l - 1;
+}
+
+    vector<int> searchRange(vector<int>& nums, int target) {
+        if (nums.empty()) return vector<int> {-1, -1};
+        int l = left_bound(nums, target);
+        int r = right_bound(nums, target);
+        if ( l >= nums.size()|| l < 0 || nums[l] != target ) l = -1;
+        if ( l >= nums.size() || r < 0 || nums[r] != target) r = -1;
+        vector<int> v{l, r};
+        return v;
+    }
+};
