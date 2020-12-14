@@ -1,0 +1,27 @@
+class Solution {
+public:
+    //vector<vector<string>> v;
+    unordered_map<string, vector<string>> m;
+    void find(string &str) {
+        string s = str;
+        sort(str.begin(), str.end());
+        if (m.find(str) == m.end()) {
+            vector<string> zbc;
+            zbc.push_back(s);
+            m[str] = zbc;
+        } else {
+            m[str].push_back(s);
+        }
+    }
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        //string str = "";
+        for (string str : strs) {
+            find(str);
+        }
+        vector<vector<string>> v;
+        for (auto iter = m.begin(); iter != m.end(); ++iter) {
+            v.push_back((*iter).second);
+        }
+        return v;
+    }
+};
